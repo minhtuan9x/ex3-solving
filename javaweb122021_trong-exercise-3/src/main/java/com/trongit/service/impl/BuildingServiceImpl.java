@@ -52,8 +52,8 @@ public class BuildingServiceImpl implements BuildingService {
     public List<BuildingResponse> findAll(BuildingSearchRequest buildingSearchRequest) {
         try {
             if (SecurityUtils.getAuthorities().contains(SystemConstant.STAFF_ROLE))
-                buildingSearchRequest.setStaffID(SecurityUtils.getPrincipal().getId().intValue());
-            return buildingRepository.findAll(toBuildingSearchBuilder(buildingSearchRequest)).stream().map(item -> buildingConverter.toBuildingResponse(item)).collect(Collectors.toList());
+                buildingSearchRequest.setStaffID(SecurityUtils.getPrincipal().getId());
+            return buildingRepository.findAll(toBuildingSearchBuilder(buildingSearchRequest)).stream().map(buildingConverter::toBuildingResponse).collect(Collectors.toList());
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -75,7 +75,7 @@ public class BuildingServiceImpl implements BuildingService {
                 .rentPriceFrom(buildingSearchRequest.getRentPriceFrom())
                 .rentPriceTo(buildingSearchRequest.getRentPriceTo())
                 .rentTypes(buildingSearchRequest.getRentTypes())
-                .staffID(buildingSearchRequest.getStaffID())
+                .staffID(Objects.nonNull(buildingSearchRequest.getStaffID()) ? buildingSearchRequest.getStaffID().intValue() : null)
                 .street(buildingSearchRequest.getStreet())
                 .ward(buildingSearchRequest.getWard())
                 .build();

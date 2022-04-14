@@ -1,21 +1,36 @@
 package com.trongit.builder;
 
+import com.trongit.annotation.searchbuilding.LikeField;
+import com.trongit.annotation.searchbuilding.OperatorField;
+import com.trongit.annotation.searchbuilding.SearchObject;
+
 import java.util.List;
 
+@SearchObject(value = "building",alias = "b")
 public class BuildingSearchBuilder {
+    @LikeField
     private String name;
+    @OperatorField
     private Integer floorArea;
+    @OperatorField
     private String district;
+    @LikeField
     private String ward;
+    @LikeField
     private String street;
+    @OperatorField
     private Integer numberOfBasement;
+    @OperatorField
     private String direction;
+    @OperatorField
     private String level;
     private Integer rentAreaFrom;
     private Integer rentAreaTo;
     private Integer rentPriceFrom;
     private Integer rentPriceTo;
+    @LikeField
     private String managerName;
+    @LikeField
     private String managerPhone;
     private Integer staffID;
     private List<String> rentTypes;

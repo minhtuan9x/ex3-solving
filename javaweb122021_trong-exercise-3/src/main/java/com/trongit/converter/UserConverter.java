@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class UserConverter {
@@ -31,10 +32,10 @@ public class UserConverter {
 
     public List<StaffAssignmentResponse> toStaffAssignmentResponses(List<UserEntity> staffAssignments) {
         List<StaffAssignmentResponse> staffAssignmentResponses = new ArrayList<>();
-        for (UserEntity item : userRepository.getAllStaff()) {
+        for (UserEntity item : userRepository.getAllByRoles_CodeAndStatus("STAFF",1)) {
             int flag = 0;
             for (UserEntity item2 : staffAssignments) {
-                    if(item.getId()==item2.getId())
+                    if(Objects.equals(item.getId(), item2.getId()))
                         flag++;
             }
             StaffAssignmentResponse staffAssignmentResponse = modelMapper.map(item,StaffAssignmentResponse.class);

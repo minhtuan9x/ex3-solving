@@ -157,7 +157,7 @@ public class UserService implements IUserService {
     @Override
     public List<UserDTO> getAllStaff() {
         List<UserDTO> userDTOS = new ArrayList<>();
-        for (UserEntity item : userRepository.getAllStaff()) {
+        for (UserEntity item : userRepository.getAllByRoles_CodeAndStatus("STAFF",1)) {
             UserDTO userDTO = userConverter.convertToDto(item);
             userDTOS.add(userDTO);
         }

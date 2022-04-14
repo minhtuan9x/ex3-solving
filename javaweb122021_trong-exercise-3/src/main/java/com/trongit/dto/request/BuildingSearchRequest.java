@@ -18,7 +18,7 @@ public class BuildingSearchRequest {
     private Integer rentPriceTo;
     private String managerName;
     private String managerPhone;
-    private Integer staffID;
+    private Long staffID;
     private List<String> rentTypes = new ArrayList<>();
 
 
@@ -134,11 +134,11 @@ public class BuildingSearchRequest {
         this.managerPhone = managerPhone;
     }
 
-    public Integer getStaffID() {
+    public Long getStaffID() {
         return staffID;
     }
 
-    public void setStaffID(Integer staffID) {
+    public void setStaffID(Long staffID) {
         this.staffID = staffID;
     }
 
