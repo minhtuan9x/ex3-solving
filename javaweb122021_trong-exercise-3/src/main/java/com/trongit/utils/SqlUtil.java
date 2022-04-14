@@ -3,12 +3,14 @@ package com.trongit.utils;
 import com.trongit.annotation.searchbuilding.LikeField;
 import com.trongit.annotation.searchbuilding.OperatorField;
 import com.trongit.annotation.searchbuilding.SearchObject;
-import com.trongit.builder.SpecialQueryBuilder;
+import com.trongit.dto.SpecialQuery;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Objects;
 
 public class SqlUtil {
-    public static String buildQuery(Object obj, SpecialQueryBuilder... specialQueryBuilder) {
+    public static String buildQuery(Object obj) {
         try {
             String select = "";
             StringBuilder join = new StringBuilder("");
@@ -26,14 +28,22 @@ public class SqlUtil {
                     isLikeField(field, where, tableName, obj);
                     isOperatorField(field, where, tableName, obj);
                 }
-                if (specialQueryBuilder.length == 1) {
-                    specialQueryBuilder[0].getJoins().forEach(join::append);
-                    specialQueryBuilder[0].getWheres().forEach(join::append);
+                Method[] methods = tClass.getDeclaredMethods();
+                for (Method method : methods) {
+                    method.setAccessible(true);
+                    if (method.getName().equals("buildQuery")) {
+                        SpecialQuery specialQuery = (SpecialQuery) method.invoke(obj);
+                        if (Objects.nonNull(specialQuery)) {
+                            specialQuery.getJoins().forEach(join::append);
+                            specialQuery.getWheres().forEach(where::append);
+                        }
+                    }
                 }
-                where.append("\n").append(searchObject.groupBy() ? "group by " + tableName + "." + "id" : "");
+
+                where.append("\n").append(!searchObject.groupBy().isEmpty() ? "group by " + tableName + "." + searchObject.groupBy() : "");
             }
-            System.out.println(select + join + where);
             System.out.println("==============================");
+            System.out.println(select + join + where);
             return select + join + where;
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
@@ -62,8 +72,7 @@ public class SqlUtil {
                     if (field.getType().toString().equals("class java.lang.String")) {
                         where.append(String.format("\nand %s.%s = '%s'", tableName, nameField, field.get(obj)));
                     }
-                    if (field.getType().toString().equals("class java.lang.Integer") || field.getType().toString().equals("class java.lang.Long")
-                            || field.getType().toString().equals("class java.lang.Double") || field.getType().toString().equals("class java.lang.Float")) {
+                    if (!field.getType().toString().equals("class java.lang.String")) {
                         where.append(String.format("\nand %s.%s = %s", tableName, nameField, field.get(obj)));
                     }
                 }

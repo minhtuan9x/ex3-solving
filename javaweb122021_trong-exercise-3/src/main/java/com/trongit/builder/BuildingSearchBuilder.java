@@ -3,37 +3,42 @@ package com.trongit.builder;
 import com.trongit.annotation.searchbuilding.LikeField;
 import com.trongit.annotation.searchbuilding.OperatorField;
 import com.trongit.annotation.searchbuilding.SearchObject;
+import com.trongit.dto.SpecialQuery;
+import com.trongit.service.CustomQuery;
+import com.trongit.utils.ValidateUtil;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@SearchObject(value = "building",alias = "b")
-public class BuildingSearchBuilder {
+@SearchObject(value = "building", alias = "bd", groupBy = "id")
+public class BuildingSearchBuilder implements CustomQuery {
     @LikeField
-    private String name;
+    private final String name;
     @OperatorField
-    private Integer floorArea;
+    private final Integer floorArea;
     @OperatorField
-    private String district;
+    private final String district;
     @LikeField
-    private String ward;
+    private final String ward;
     @LikeField
-    private String street;
+    private final String street;
     @OperatorField
-    private Integer numberOfBasement;
+    private final Integer numberOfBasement;
     @OperatorField
-    private String direction;
+    private final String direction;
     @OperatorField
-    private String level;
-    private Integer rentAreaFrom;
-    private Integer rentAreaTo;
-    private Integer rentPriceFrom;
-    private Integer rentPriceTo;
+    private final String level;
+    private final Integer rentAreaFrom;
+    private final Integer rentAreaTo;
+    private final Integer rentPriceFrom;
+    private final Integer rentPriceTo;
     @LikeField
-    private String managerName;
+    private final String managerName;
     @LikeField
-    private String managerPhone;
-    private Integer staffID;
-    private List<String> rentTypes;
+    private final String managerPhone;
+    private final Integer staffID;
+    private final List<String> rentTypes;
 
     public String getName() {
         return name;
@@ -116,6 +121,58 @@ public class BuildingSearchBuilder {
         managerPhone = builder.managerPhone;
         staffID = builder.staffID;
         rentTypes = builder.rentTypes;
+    }
+
+    @Override
+    public SpecialQuery buildQuery() {
+        SpecialQuery specialQueryBuilder = new SpecialQuery();
+        specialQueryBuilder.setJoins(buildJoinQuery());
+        specialQueryBuilder.setWheres(buildWhereQuery());
+        return specialQueryBuilder;
+    }
+
+    private List<String> buildJoinQuery() {
+        List<String> joins = new ArrayList<>();
+        if (ValidateUtil.isValid(this.getRentAreaTo())
+                || ValidateUtil.isValid(this.getRentAreaFrom()))
+            joins.add("\ninner join rentarea as ra on bd.id = ra.buildingid ");
+        if (ValidateUtil.isValid(this.getStaffID()))
+            joins.add("\ninner join assignmentbuilding as ab on bd.id = ab.buildingid inner join user as u on ab.staffid = u.id ");
+        return joins;
+    }
+
+    private List<String> buildWhereQuery() {
+        List<String> wheres = new ArrayList<>();
+        StringBuilder where = new StringBuilder();
+        if (this.getRentTypes() != null && this.getRentTypes().size() > 0) {
+            where.append("\nand (");
+            String renttypes = this.getRentTypes().stream()
+                    .map(item -> ("bd.type like '%" + item + "%'")).collect(Collectors.joining(" or "));
+            where.append(renttypes);
+            where.append(" )");
+        }
+
+        if (ValidateUtil.isValid(this.getStaffID())) {
+            where.append("\nand u.id = " + this.getStaffID());
+        }
+
+        if (ValidateUtil.isValid(this.getRentAreaFrom())) {
+            where.append("\nand EXISTS (select * from rentarea as ra where bd.id=ra.buildingid and ra.value >= "
+                    + this.getRentAreaFrom() + ")");
+        }
+        if (ValidateUtil.isValid(this.getRentAreaTo())) {
+            where.append("\nand EXISTS (select * from rentarea as ra where bd.id=ra.buildingid and ra.value <= "
+                    + this.getRentAreaTo() + ")");
+        }
+
+        if (ValidateUtil.isValid(this.getRentPriceFrom())) {
+            where.append("\nand bd.rentprice >= " + this.getRentPriceFrom());
+        }
+        if (ValidateUtil.isValid(this.getRentPriceTo())) {
+            where.append("\nand bd.rentprice <= " + this.getRentPriceTo());
+        }
+        wheres.add(where.toString());
+        return wheres;
     }
 
     public static final class Builder {

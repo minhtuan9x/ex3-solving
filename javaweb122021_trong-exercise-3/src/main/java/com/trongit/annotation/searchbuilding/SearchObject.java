@@ -10,5 +10,5 @@ import java.lang.annotation.Target;
 public @interface SearchObject {
     String value() default "";
     String alias() default "";
-    boolean groupBy() default true;
+    String groupBy() default "";
 }
