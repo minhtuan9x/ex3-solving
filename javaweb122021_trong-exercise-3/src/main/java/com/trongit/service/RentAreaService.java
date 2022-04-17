@@ -6,5 +6,4 @@ import com.trongit.dto.RentAreaDTO;
 import java.util.List;
 
 public interface RentAreaService {
-    void saveAllByBuilding(List<RentAreaDTO> rentAreaDTOS, BuildingDTO buildingDTO);
 }

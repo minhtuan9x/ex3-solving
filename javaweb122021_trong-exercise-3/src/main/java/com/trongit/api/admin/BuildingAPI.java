@@ -8,6 +8,7 @@ import com.trongit.dto.response.StaffAssignmentResponse;
 import com.trongit.service.BuildingService;
 import com.trongit.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,10 +28,7 @@ public class BuildingAPI {
         return buildingService.findAll(params, rentTypes);
     }
 
-    @GetMapping("/name")
-    public List<BuildingResponse> findByNameLike(@RequestParam(required = false, name = "name") String name) {
-        return buildingService.findByNameLike(name);
-    }
+
 
     @PostMapping
     public BuildingDTO save(@RequestBody(required = false) BuildingDTO buildingDTO) {
@@ -49,9 +47,9 @@ public class BuildingAPI {
         return assignmentBuildingRequest;
     }
 
-    @DeleteMapping("/{id}")
-    public Long delete(@PathVariable("id") Long id) {
-        buildingService.delete(id);
-        return id;
+    @DeleteMapping
+    public ResponseEntity<Void> deleteIn(@RequestBody List<Long> ids){
+        buildingService.deleteIn(ids);
+        return ResponseEntity.ok().build();
     }
 }

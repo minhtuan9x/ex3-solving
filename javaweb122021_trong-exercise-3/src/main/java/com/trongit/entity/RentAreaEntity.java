@@ -29,5 +29,10 @@ public class RentAreaEntity extends BaseEntity {
         this.buildingEntity = buildingEntity;
     }
 
+    public RentAreaEntity(){}
 
+    public RentAreaEntity(Integer value, BuildingEntity buildingEntity) {
+        this.value = value;
+        this.buildingEntity = buildingEntity;
+    }
 }

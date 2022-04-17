@@ -28,14 +28,5 @@ public class RentAreaServiceImpl implements RentAreaService {
     @Autowired
     private BuildingRepository buildingRepository;
 
-    @Override
-    public void saveAllByBuilding(List<RentAreaDTO> rentAreaDTOS, BuildingDTO buildingDTO) {
-        List<RentAreaEntity> rentAreaEntities = new ArrayList<>();
-        for (RentAreaDTO item : rentAreaDTOS) {
-            RentAreaEntity rentAreaEntity = rentAreaConverter.toRentAreaEntity(item);
-            rentAreaEntities.add(rentAreaEntity);
-        }
-        BuildingEntity buildingEntity = buildingRepository.findById(buildingDTO.getId());
-        rentAreaRepository.saveAllByBuilding(rentAreaEntities, Objects.nonNull(buildingEntity) ? buildingEntity.getRentAreaEntities() : new ArrayList<>());
-    }
+
 }

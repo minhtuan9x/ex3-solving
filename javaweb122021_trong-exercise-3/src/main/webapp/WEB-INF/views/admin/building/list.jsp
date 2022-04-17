@@ -71,9 +71,10 @@
                                                 <label><b>Quận Hiện Có</b></label>
                                                 <form:select path="district" cssClass="form-control">
                                                     <option selected value="">Chọn Quận</option>
-                                                    <c:forEach var="item" items="${modelDistrict}">
-                                                        <form:option value="${item.code}">${item.name}</form:option>
-                                                    </c:forEach>
+<%--                                                    <c:forEach var="item" items="${modelDistrict}">--%>
+<%--                                                        <form:option value="${item.code}">${item.name}</form:option>--%>
+<%--                                                    </c:forEach>--%>
+                                                    <form:options items="${modelDistrict}"></form:options>
                                                 </form:select>
                                             </div>
                                             <div class="col-md-4">
@@ -173,10 +174,11 @@
                                     <div class="col-xs-12">
                                         <div class="col-md-6">
                                             <div class="form-check">
-                                                <c:forEach var="item" items="${modelBuildingType}">
-                                                    <form:checkbox id="rent" path="rentTypes" value="${item.code}"
-                                                                   label="${item.name}" cssClass="form-check-input"/>
-                                                </c:forEach>
+<%--                                                <c:forEach var="item" items="${modelBuildingType}">--%>
+<%--                                                    <form:checkbox id="rent" path="rentTypes" value="${item.code}"--%>
+<%--                                                                   label="${item.name}" cssClass="form-check-input"/>--%>
+<%--                                                </c:forEach>--%>
+                                                <form:checkboxes path="rentTypes" items="${modelBuildingType}"></form:checkboxes>
                                             </div>
                                         </div>
                                     </div>
@@ -395,20 +397,17 @@
         $.each($("input[name='checkBuildings[]']:checked"), function () {
             values.push($(this).val());
         });
-        values.forEach(item => {
-            $.ajax({
-                type: "DELETE",
-                url: '<c:url value="/api/building/"/>' + item,
-                dataType: "json",//kieu du lieu tu server tra ve client
-                contentType: "application/json",//kieu du lieu tu client gui ve server
-                success: function (response) {
-                    window.location.reload();
-                },
-                error: function (response) {
-                    alert("fail")
-                    console.log(response)
-                }
-            });
+        $.ajax({
+            url: "/api/building",
+            method: "delete",
+            data: JSON.stringify(values),
+            contentType: "application/json",
+            success: e => {
+                location.reload()
+            },
+            error: e => {
+                alert("error!!!")
+            }
         })
     })
 

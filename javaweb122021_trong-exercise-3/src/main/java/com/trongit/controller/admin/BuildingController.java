@@ -32,9 +32,9 @@ public class BuildingController {
     @GetMapping("/building-list")
     public ModelAndView buildingList(@ModelAttribute("modelSearch") BuildingSearchRequest buildingSearchRequest) {
         ModelAndView modelAndView = new ModelAndView("admin/building/list");
-        modelAndView.addObject("modelDistrict", districtService.getAll());
+        modelAndView.addObject("modelDistrict", districtService.getDistricts());
         modelAndView.addObject("modelStaff", userService.getAllStaff());
-        modelAndView.addObject("modelBuildingType", buildingTypeService.getAll());
+        modelAndView.addObject("modelBuildingType", buildingTypeService.getBuildingTypes());
         modelAndView.addObject("modelBuildings", buildingService.findAll(buildingSearchRequest));
         return modelAndView;
     }
@@ -42,8 +42,8 @@ public class BuildingController {
     @GetMapping("/building-edit")
     public ModelAndView buildingEdit(@RequestParam(name = "buildingid", required = false) Long id) {
         ModelAndView modelAndView = new ModelAndView("admin/building/edit");
-        modelAndView.addObject("modelDistrict", districtService.findAllWithMap());
-        modelAndView.addObject("modelBuildingType", buildingTypeService.findAllWithMap());
+        modelAndView.addObject("modelDistrict", districtService.getDistricts());
+        modelAndView.addObject("modelBuildingType", buildingTypeService.getBuildingTypes());
         modelAndView.addObject("modelBuilding", buildingService.findById(id));
         return modelAndView;
     }

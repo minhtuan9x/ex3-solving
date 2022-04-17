@@ -271,4 +271,9 @@ public class BuildingEntity extends BaseEntity {
 		this.assignmentBuildingEntities = assignmentBuildingEntities;
 	}
 
+	public BuildingEntity(){}
+
+	public BuildingEntity(Long id) {
+		super(id);
+	}
 }

@@ -11,9 +11,8 @@ import java.util.Map;
 public interface BuildingService {
     List<BuildingResponse> findAll(Map<String, Object> params, List<String> rentTypes);
     List<BuildingResponse> findAll(BuildingSearchRequest buildingSearchRequest);
-    List<BuildingResponse> findByNameLike(String name);
     BuildingDTO findById(Long id);
     BuildingDTO save(BuildingDTO buildingDTO);
     void assignmentBuilding(AssignmentBuildingRequest assignmentBuildingRequest, Long buildingID);
-    void delete(Long id);
+    void deleteIn(List<Long> ids);
 }

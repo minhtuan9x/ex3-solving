@@ -75,4 +75,10 @@ public class BaseEntity implements Serializable {
     public void setModifiedBy(String modifiedBy) {
         this.modifiedBy = modifiedBy;
     }
+
+    public BaseEntity(){}
+
+    public BaseEntity(Long id) {
+        this.id = id;
+    }
 }

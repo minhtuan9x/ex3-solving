@@ -9,5 +9,5 @@ import java.util.Map;
 public interface DistrictService {
     List<DistrictResponse> getAll();
     List<DistrictResponse> getAllByBuilding(BuildingDTO buildingDTO);
-    Map<String,String> findAllWithMap();
+    Map<String,String> getDistricts();
 }

@@ -46,7 +46,7 @@ public class DistrictServiceImpl implements DistrictService {
     }
 
     @Override
-    public Map<String, String> findAllWithMap() {
+    public Map<String, String> getDistricts() {
         Map<String, String> districtMap = new HashMap<>();
         for (DistrictEnum item : DistrictEnum.values()) {
             districtMap.put(item.name(), item.getDistrictValue());

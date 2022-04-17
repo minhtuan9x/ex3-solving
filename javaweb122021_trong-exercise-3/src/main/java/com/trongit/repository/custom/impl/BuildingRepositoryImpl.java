@@ -75,16 +75,5 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
         }
     }
 
-    @Transactional
-    @Override
-    public void deleteBuilding(BuildingEntity buildingEntity) {
-        if (buildingEntity.getRentAreaEntities().size() > 0) {
-            rentAreaRepository.deleteByIdIn(buildingEntity.getRentAreaEntities().stream().map(BaseEntity::getId).collect(Collectors.toList()));
-        }
-        if (buildingEntity.getAssignmentBuildingEntities().size() > 0) {
-            assignmentBuildingRepository.deleteByIdIn(buildingEntity.getAssignmentBuildingEntities().stream().map(BaseEntity::getId).collect(Collectors.toList()));
-        }
-        entityManager.remove(buildingEntity);
-    }
 
 }

@@ -46,7 +46,7 @@ public class BuildingTypeServiceImpl implements BuildingTypeService {
     }
 
     @Override
-    public Map<String, String> findAllWithMap() {
+    public Map<String, String> getBuildingTypes() {
         Map<String, String> districtMap = new HashMap<>();
         for (BuildingTypeEnum item : BuildingTypeEnum.values()) {
             districtMap.put(item.name(), item.getBuildingTypeValue());
