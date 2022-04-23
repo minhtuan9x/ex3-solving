@@ -22,53 +22,57 @@ public class BuildingConverter {
 
     @Autowired
     private ModelMapper modelMapper;
-    public BuildingResponse toBuildingResponse(BuildingEntity buildingEntity){
+
+    public BuildingResponse toBuildingResponse(BuildingEntity buildingEntity) {
         BuildingResponse buildingResponse;
-        buildingResponse = modelMapper.map(buildingEntity,BuildingResponse.class);
-        String districtName="";
-        for(DistrictEnum item : DistrictEnum.values()){
-            if(item.name().equals(buildingEntity.getDistrict())){
+        buildingResponse = modelMapper.map(buildingEntity, BuildingResponse.class);
+        String districtName = "";
+        for (DistrictEnum item : DistrictEnum.values()) {
+            if (item.name().equals(buildingEntity.getDistrict())) {
                 districtName = item.getDistrictValue();
                 break;
             }
         }
-        buildingResponse.setAddress(buildingEntity.getStreet()+"-"+buildingEntity.getWard()+"-"+districtName);
+        buildingResponse.setAddress(buildingEntity.getStreet() + "-" + buildingEntity.getWard() + "-" + districtName);
         return buildingResponse;
     }
-    public BuildingDTO toBuildingDTO(BuildingEntity buildingEntity){
-        BuildingDTO buildingDTO = modelMapper.map(buildingEntity,BuildingDTO.class);
+
+    public BuildingDTO toBuildingDTO(BuildingEntity buildingEntity) {
+        BuildingDTO buildingDTO = modelMapper.map(buildingEntity, BuildingDTO.class);
         List<String> rentAreas = new ArrayList<>();
-        for(RentAreaEntity item : buildingEntity.getRentAreaEntities()){
+        for (RentAreaEntity item : buildingEntity.getRentAreaEntities()) {
             rentAreas.add(String.valueOf(item.getValue()));
         }
-        String rentAreaStr = String.join(",",rentAreas);
+        String rentAreaStr = String.join(",", rentAreas);
         buildingDTO.setRentArea(rentAreaStr);
-        if(buildingEntity.getType()!=null){
+        if (buildingEntity.getType() != null) {
             List<String> typeDTOs = new ArrayList<>();
             String[] types = buildingEntity.getType().trim().split(",");
-            for(String item : types){
+            for (String item : types) {
                 typeDTOs.add(item);
             }
             buildingDTO.setType(typeDTOs);
         }
         return buildingDTO;
     }
-    public BuildingSearchRequest toBuildingSearchRequest(BuildingSearchRequest buildingSearchRequest){
-        if(buildingSearchRequest.getRentTypes()!=null){
+
+    public BuildingSearchRequest toBuildingSearchRequest(BuildingSearchRequest buildingSearchRequest) {
+        if (buildingSearchRequest.getRentTypes() != null) {
             List<String> a = new ArrayList<>();
-            for(String item : buildingSearchRequest.getRentTypes()){
-                a.add("'"+item+"'");
+            for (String item : buildingSearchRequest.getRentTypes()) {
+                a.add("'" + item + "'");
             }
             buildingSearchRequest.setRentTypes(a);
         }
-        return  buildingSearchRequest;
+        return buildingSearchRequest;
     }
-    public BuildingEntity toBuildingEntity(BuildingDTO buildingDTO){
-        BuildingEntity buildingEntity = modelMapper.map(buildingDTO,BuildingEntity.class);
-        if(buildingDTO.getType()!=null){
+
+    public BuildingEntity toBuildingEntity(BuildingDTO buildingDTO) {
+        BuildingEntity buildingEntity = modelMapper.map(buildingDTO, BuildingEntity.class);
+        if (buildingDTO.getType() != null) {
             String type = String.join(",", buildingDTO.getType());
             buildingEntity.setType(type);
         }
-        return  buildingEntity;
+        return buildingEntity;
     }
 }

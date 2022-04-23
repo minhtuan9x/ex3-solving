@@ -27,25 +27,6 @@ public class BuildingTypeServiceImpl implements BuildingTypeService {
     }
 
     @Override
-    public List<BuildingTypeResponse> getAllByBuilding(BuildingDTO buildingDTO) {
-        List<BuildingTypeResponse> buildingTypeResponses = new ArrayList<>();
-        for (BuildingTypeEnum item : BuildingTypeEnum.values()) {
-            BuildingTypeResponse buildingTypeResponse = new BuildingTypeResponse();
-            buildingTypeResponse.setCode(item.name());
-            buildingTypeResponse.setName(item.getBuildingTypeValue());
-            if (buildingDTO.getType() != null) {
-                for (String item2 : buildingDTO.getType()) {
-                    if (item2.equals(item.name())) {
-                        buildingTypeResponse.setChecked("checked");
-                    }
-                }
-            }
-            buildingTypeResponses.add(buildingTypeResponse);
-        }
-        return buildingTypeResponses;
-    }
-
-    @Override
     public Map<String, String> getBuildingTypes() {
         Map<String, String> districtMap = new HashMap<>();
         for (BuildingTypeEnum item : BuildingTypeEnum.values()) {

@@ -5,23 +5,18 @@ import com.trongit.constant.SystemConstant;
 import com.trongit.converter.BuildingConverter;
 import com.trongit.converter.RentAreaConverter;
 import com.trongit.dto.BuildingDTO;
-import com.trongit.dto.RentAreaDTO;
 import com.trongit.dto.request.AssignmentBuildingRequest;
 import com.trongit.dto.request.BuildingSearchRequest;
 import com.trongit.dto.response.BuildingResponse;
-import com.trongit.entity.BaseEntity;
 import com.trongit.entity.BuildingEntity;
 import com.trongit.entity.UserEntity;
-import com.trongit.repository.AssignmentBuildingRepository;
 import com.trongit.repository.BuildingRepository;
 import com.trongit.repository.RentAreaRepository;
 import com.trongit.repository.UserRepository;
 import com.trongit.security.utils.SecurityUtils;
 import com.trongit.service.BuildingService;
-import com.trongit.service.RentAreaService;
 import com.trongit.utils.MapUtil;
 import com.trongit.utils.ParseIntUtil;
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,13 +34,10 @@ public class BuildingServiceImpl implements BuildingService {
     @Autowired
     private BuildingRepository buildingRepository;
     @Autowired
-    private RentAreaService rentAreaService;
-    @Autowired
     private UserRepository userRepository;
     @Autowired
     private RentAreaRepository rentAreaRepository;
-    @Autowired
-    private AssignmentBuildingRepository assignmentBuildingRepository;
+
 
     @Override
     public List<BuildingResponse> findAll(Map<String, Object> params, List<String> rentTypes) {
@@ -99,33 +91,28 @@ public class BuildingServiceImpl implements BuildingService {
 
     @Override
     public BuildingDTO save(BuildingDTO buildingDTO) {
-        BuildingEntity buildingEntity = buildingConverter.toBuildingEntity(buildingDTO);
-        if (Objects.nonNull(buildingEntity.getId())) {
-            Optional.ofNullable(buildingRepository.findById(buildingEntity.getId())).orElseThrow(() -> new RuntimeException("Not found building !!!"));
-            rentAreaRepository.deleteAllByBuildingEntity_IdIn(Collections.singletonList(buildingEntity.getId()));
+        if (buildingDTO.getId() != null) {
+            rentAreaRepository.deleteAllByBuildingEntity_IdIn(Collections.singletonList(buildingDTO.getId()));
         }
-        BuildingDTO buildingDTOSaved = buildingConverter.toBuildingDTO(buildingRepository.save(buildingEntity));
-        if (Objects.nonNull(buildingDTO.getRentArea()) && !buildingDTO.getRentArea().isEmpty())
-            rentAreaRepository.save(rentAreaConverter.toRentAreaEntities(buildingDTO.getRentArea(), buildingDTOSaved.getId()));
-        return buildingDTOSaved;
+        BuildingEntity buildingEntityAfterSaved = buildingRepository.save(buildingConverter.toBuildingEntity(buildingDTO));
+        rentAreaRepository.save(rentAreaConverter.toRentAreaEntities(buildingDTO.getRentArea(), buildingEntityAfterSaved.getId()));
+        return buildingConverter.toBuildingDTO(buildingRepository.save(buildingEntityAfterSaved));
     }
 
     @Override
     public void assignmentBuilding(AssignmentBuildingRequest assignmentBuildingRequest, Long buildingID) {
-        List<UserEntity> userEntities = new ArrayList<>();
-        for (Integer item : assignmentBuildingRequest.getStaffIDs()) {
-            userEntities.add(userRepository.findOneById(item.longValue()));
-        }
-        BuildingEntity buildingEntity = buildingRepository.findById(buildingID);
-        buildingRepository.assignmentBuilding(userEntities, buildingEntity);
+        BuildingEntity buildingEntityFound = Optional.ofNullable(buildingRepository.findById(buildingID)).orElseThrow(() -> new RuntimeException("Not found Building"));
+        List<UserEntity> userEntityFoundList = userRepository.findAllByIdIn(assignmentBuildingRequest.getStaffIDs());
+        if (userEntityFoundList.size() != assignmentBuildingRequest.getStaffIDs().size())
+            throw new RuntimeException("Not found Staff !!!");
+        buildingEntityFound.setUserEntities(userEntityFoundList);
+        buildingRepository.save(buildingEntityFound);
     }
 
     @Override
     public void deleteIn(List<Long> ids) {
         if (buildingRepository.findAll(ids).size() != ids.size())
             throw new RuntimeException("Not found building");
-        rentAreaRepository.deleteAllByBuildingEntity_IdIn(ids);
-        assignmentBuildingRepository.deleteAllByBuildingEntity_IdIn(ids);
         buildingRepository.deleteAllByIdIn(ids);
     }
 

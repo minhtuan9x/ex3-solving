@@ -157,7 +157,7 @@ public class UserService implements IUserService {
     @Override
     public List<UserDTO> getAllStaff() {
         List<UserDTO> userDTOS = new ArrayList<>();
-        for (UserEntity item : userRepository.getAllByRoles_CodeAndStatus("STAFF",1)) {
+        for (UserEntity item : userRepository.getAllByRoles_CodeAndStatus("STAFF", 1)) {
             UserDTO userDTO = userConverter.convertToDto(item);
             userDTOS.add(userDTO);
         }
@@ -166,6 +166,6 @@ public class UserService implements IUserService {
 
     @Override
     public List<StaffAssignmentResponse> getAllStaffAssignmentBuilding(Long buildingID) {
-        return userConverter.toStaffAssignmentResponses(userRepository.getAllStaffByBuildingID(buildingID));
+        return userConverter.toStaffAssignmentResponses(userRepository.findAllByBuildingEntities_IdAndRoles_CodeAndStatus(buildingID, "STAFF", 1));
     }
 }
