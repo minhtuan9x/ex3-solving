@@ -57,4 +57,11 @@ public class RentAreaConverter {
         assert rentAreas != null : "Not found rentArea";
         return rentAreas.stream().map(item -> new RentAreaEntity(Integer.parseInt(item), new BuildingEntity(buildingId))).collect(Collectors.toList());
     }
+
+    public List<RentAreaEntity> toRentAreaEntities(String rentArea) {
+        List<String> rentAreas = rentArea != null ? Arrays.stream(rentArea.trim().split(","))
+                .filter(item -> item.matches("[0-9]+")).collect(Collectors.toList()) : null;
+        assert rentAreas != null : "Not found rentArea";
+        return rentAreas.stream().map(item -> new RentAreaEntity(Integer.parseInt(item), new BuildingEntity())).collect(Collectors.toList());
+    }
 }

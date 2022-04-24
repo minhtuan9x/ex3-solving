@@ -15,8 +15,6 @@ public class CustomerEntity extends BaseEntity {
     @Column(name = "email")
     private String email;
 
-    //    @OneToMany(mappedBy = "customerEntity",fetch = FetchType.LAZY)
-//    private List<AssignmentCustomerEntity> assignmentCustomerEntities = new ArrayList<>();
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "assignmentcustomer",
             joinColumns = @JoinColumn(name = "customerid", nullable = false),

@@ -95,7 +95,7 @@ public class BuildingServiceImpl implements BuildingService {
             rentAreaRepository.deleteAllByBuildingEntity_IdIn(Collections.singletonList(buildingDTO.getId()));
         }
         BuildingEntity buildingEntityAfterSaved = buildingRepository.save(buildingConverter.toBuildingEntity(buildingDTO));
-        rentAreaRepository.save(rentAreaConverter.toRentAreaEntities(buildingDTO.getRentArea(), buildingEntityAfterSaved.getId()));
+        buildingEntityAfterSaved.setRentAreaEntities(rentAreaConverter.toRentAreaEntities(buildingDTO.getRentArea(), buildingEntityAfterSaved.getId()));
         return buildingConverter.toBuildingDTO(buildingRepository.save(buildingEntityAfterSaved));
     }
 
